@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gacha Game - Single Edition</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Zen+Maru+Gothic:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* CSS Inlined from styles.css */
+        :root {
+            --bg-color: #0d0d12;
+            --accent-color: #00f0ff;
+            --accent-glow: rgba(0, 240, 255, 0.4);
+            --secondary-color: #ff0055;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --font-heading: 'Orbitron', sans-serif;
+            --font-body: 'Zen Maru Gothic', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            overflow: hidden;
+            height: 100vh;
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(0, 240, 255, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 0, 85, 0.1) 0%, transparent 20%);
+        }
+
+        #app {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .screen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        .screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            padding: 3rem;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .login-card h1 {
+            font-family: var(--font-heading);
+            color: var(--accent-color);
+            text-shadow: 0 0 10px var(--accent-glow);
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+        }
+
+        .login-card .subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .input-group input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            padding: 1rem;
+            color: white;
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            text-align: center;
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: var(--accent-color);
+        }
+
+        button {
+            cursor: pointer;
+            font-family: var(--font-heading);
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--accent-color);
+            color: #000;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 4px;
+            text-transform: uppercase;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px var(--accent-glow);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            border-radius: 4px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 240, 255, 0.1);
+        }
+
+        .top-bar {
+            width: 100%;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .top-bar .value {
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            margin-left: 0.5rem;
+            color: var(--accent-color);
+        }
+
+        .main-content {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            padding: 2rem;
+            gap: 2rem;
+        }
+
+        .left-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .right-panel {
+            flex: 2;
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .right-panel h2,
+        .left-panel h2 {
+            font-family: var(--font-heading);
+            margin-bottom: 1.5rem;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 0.5rem;
+        }
+
+        .character-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .char-card {
+            width: 120px;
+            aspect-ratio: 3/4;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid transparent;
+            transition: all 0.3s;
+            text-align: center;
+            position: relative;
+        }
+
+        .char-card:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-5px);
+        }
+
+        .char-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top;
+            background: #222;
+        }
+
+        .char-card .info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem 0.5rem 0.5rem;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.5) 60%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .char-card .name {
+            display: block;
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: #fff;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 1);
+        }
+
+        .char-card .rate {
+            font-size: 0.75rem;
+            color: var(--accent-color);
+            font-family: var(--font-heading);
+        }
+
+        .gacha-controls {
+            text-align: center;
+        }
+
+        .btn-draw {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #1a1a2e, #16213e);
+            border: 1px solid var(--glass-border);
+            padding: 1.5rem;
+            border-radius: 8px;
+            color: white;
+        }
+
+        .btn-draw:hover {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.4);
+            transform: scale(1.02);
+        }
+
+        .btn-draw .draw-label {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .btn-draw .cost {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .error-msg {
+            color: var(--secondary-color);
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .summon-animation {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+        }
+
+        .result-container {
+            z-index: 101;
+            text-align: center;
+            width: 80%;
+            max-width: 1000px;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+
+        @media (min-width: 800px) {
+            .result-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        .result-card {
+            width: 100%;
+            aspect-ratio: 3/4;
+            animation: flipIn 0.6s ease-out backwards;
+        }
+
+        .result-summary {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-align: left;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .result-summary h3 {
+            margin-bottom: 0.5rem;
+            color: var(--accent-color);
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        .result-summary ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .result-summary li {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes flipIn {
+            from {
+                opacity: 0;
+                transform: rotateY(90deg);
+            }
+
+            to {
+                opacity: 1;
+                transform: rotateY(0);
+            }
+        }
+
+        .char-card.ssr {
+            border: 2px solid #ffd700;
+            box-shadow: 0 0 10px #ffd700;
+        }
+
+        .char-card.sr {
+            border: 2px solid #c0c0c0;
+            box-shadow: 0 0 8px #c0c0c0;
+        }
+
+        .char-card.r {
+            border: 2px solid #cd7f32;
+        }
+
+        .badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .badge.ssr {
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            box-shadow: 0 0 5px #ffd700;
+        }
+
+        .badge.sr {
+            background: linear-gradient(135deg, #e0e0e0, #a0a0b0);
+        }
+
+        .badge.r {
+            background: #8b4513;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div id="loading" class="screen active">
+            <div class="loader"></div>
+            <p>SYSTEM INITIALIZING...</p>
+        </div>
+
+        <div id="login-screen" class="screen hidden">
+            <div class="login-card">
+                <h1>GACHA SYSTEM</h1>
+                <p class="subtitle">Enter your Identity</p>
+                <div class="input-group">
+                    <input type="text" id="user-id-input" placeholder="USER ID" autocomplete="off">
+                </div>
+                <button id="start-btn" class="btn-primary">START GAME</button>
+            </div>
+        </div>
+
+        <div id="lobby-screen" class="screen hidden">
+            <header class="top-bar">
+                <div class="user-info">
+                    <span class="label">PLAYER:</span>
+                    <span id="display-user-id" class="value">---</span>
+                </div>
+                <div class="ticket-info">
+                    <span class="icon">🎫</span>
+                    <span id="ticket-count" class="value">0</span>
+                </div>
+            </header>
+
+            <main class="main-content">
+                <section class="left-panel">
+                    <div class="gacha-controls">
+                        <h2>SUMMON</h2>
+                        <div class="actions">
+                            <button id="draw-one-btn" class="btn-draw" data-cost="1">
+                                <span class="draw-label">SINGLE</span>
+                                <span class="cost">1 Ticket</span>
+                            </button>
+                            <button id="draw-ten-btn" class="btn-draw" data-cost="10">
+                                <span class="draw-label">10x SUMMON</span>
+                                <span class="cost">10 Tickets</span>
+                            </button>
+                        </div>
+                        <div id="error-message" class="error-msg hidden"></div>
+                    </div>
+                </section>
+
+                <section class="right-panel">
+                    <h2>CHARACTER POOL</h2>
+                    <div id="character-pool" class="character-grid"></div>
+                </section>
+            </main>
+        </div>
+
+        <div id="gacha-overlay" class="overlay hidden">
+            <div class="summon-animation">
+                <div class="summon-circle"></div>
+                <div class="summon-rays"></div>
+            </div>
+            <div id="result-container" class="result-container hidden">
+                <div id="result-grid" class="result-grid"></div>
+                <button id="close-result-btn" class="btn-secondary">CONFIRM</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* JS Inlined from api.js and app.js */
+
+        // --- API LAYER ---
+        const CONFIG = {
+            GAS_URL: '',
+            MOCK_MODE: true,
+            MOCK_DELAY: 800
+        };
+
+        const MOCK_DB = {
+            users: {},
+            characters: [
+                { charId: 'jim', name: 'Jim', weight: 10, imageUrl: 'asset/2.jpg', rarity: 'SSR' },
+                { charId: 'wil', name: 'Wil', weight: 15, imageUrl: 'asset/1.jpg', rarity: 'SR' },
+                { charId: 'ken', name: 'Ken', weight: 25, imageUrl: 'asset/3.jpg', rarity: 'R' },
+                { charId: 'pal', name: 'Pal', weight: 25, imageUrl: 'asset/4.jpg', rarity: 'R' },
+                { charId: 'dan', name: 'Dan', weight: 25, imageUrl: 'asset/5.jpg', rarity: 'R' }
+            ]
+        };
+
+        async function apiCall(action, payload) {
+            if (CONFIG.MOCK_MODE || !CONFIG.GAS_URL) {
+                return new Promise(resolve => {
+                    setTimeout(() => { resolve(mockHandler(action, payload)); }, CONFIG.MOCK_DELAY);
+                });
+            }
+            try {
+                const response = await fetch(CONFIG.GAS_URL, { method: 'POST', body: JSON.stringify({ action, ...payload }) });
+                return await response.json();
+            } catch (e) {
+                return { status: 'error', message: 'Network Error' };
+            }
+        }
+
+        function mockHandler(action, payload) {
+            if (action === 'initUser') {
+                const { userId } = payload;
+                if (!MOCK_DB.users[userId]) MOCK_DB.users[userId] = { tickets: 100 };
+                return { status: 'success', data: { userId, tickets: MOCK_DB.users[userId].tickets, characterPool: MOCK_DB.characters } };
+            }
+            if (action === 'draw') {
+                const { userId, drawType, cost } = payload;
+                const user = MOCK_DB.users[userId];
+                if (!user) return { status: 'error', message: 'User not found' };
+                if (user.tickets < cost) return { status: 'error', message: 'INSUFFICIENT TICKETS' };
+                user.tickets -= cost;
+                const results = [];
+                const count = drawType === 'ten' ? 10 : 1;
+                for (let i = 0; i < count; i++) { results.push(weightedRandom(MOCK_DB.characters)); }
+                return { status: 'success', data: { ticketsAfter: user.tickets, results, drawType } };
+            }
+        }
+
+        function weightedRandom(pool) {
+            const total = pool.reduce((acc, item) => acc + item.weight, 0);
+            let rand = Math.random() * total;
+            for (const item of pool) { if (rand < item.weight) return item; rand -= item.weight; }
+            return pool[0];
+        }
+
+        window.gachaApi = {
+            initUser: (userId) => apiCall('initUser', { userId }),
+            draw: (userId, type, cost) => apiCall('draw', { userId, drawType: type, cost, requestId: crypto.randomUUID() })
+        };
+
+        // --- APP LAYER ---
+        const state = { user: null, pool: [], isAnimating: false };
+        const doc = document;
+        const screens = { loading: doc.getElementById('loading'), login: doc.getElementById('login-screen'), lobby: doc.getElementById('lobby-screen') };
+        const ui = {
+            summonAnimation: doc.querySelector('.summon-animation'),
+            userIdInput: doc.getElementById('user-id-input'),
+            startBtn: doc.getElementById('start-btn'),
+            displayUserId: doc.getElementById('display-user-id'),
+            ticketCount: doc.getElementById('ticket-count'),
+            charPool: doc.getElementById('character-pool'),
+            drawOneBtn: doc.getElementById('draw-one-btn'),
+            drawTenBtn: doc.getElementById('draw-ten-btn'),
+            gachaOverlay: doc.getElementById('gacha-overlay'),
+            resultContainer: doc.getElementById('result-container'),
+            resultGrid: doc.getElementById('result-grid'),
+            closeResultBtn: doc.getElementById('close-result-btn'),
+            errorMsg: doc.getElementById('error-message')
+        };
+
+        window.addEventListener('DOMContentLoaded', () => { switchScreen('login'); });
+        ui.startBtn.addEventListener('click', handleLogin);
+        ui.drawOneBtn.addEventListener('click', () => handleDraw('single', 1));
+        ui.drawTenBtn.addEventListener('click', () => handleDraw('ten', 10));
+        ui.closeResultBtn.addEventListener('click', closeResults);
+
+        async function handleLogin() {
+            const userId = ui.userIdInput.value.trim();
+            if (!userId) return;
+            setLoading(true);
+            const res = await window.gachaApi.initUser(userId);
+            setLoading(false);
+            if (res.status === 'success') {
+                state.user = { userId: res.data.userId, tickets: res.data.tickets };
+                state.pool = res.data.characterPool;
+                renderLobby(); switchScreen('lobby');
+            } else { alert("Login failed: " + res.message); }
+        }
+
+        async function handleDraw(type, cost) {
+            if (state.isAnimating) return;
+            if (state.user.tickets < cost) { showError("NOT ENOUGH TICKETS"); return; }
+            state.isAnimating = true; showError("");
+            ui.summonAnimation.classList.remove('hidden');
+            ui.resultContainer.classList.add('hidden');
+            ui.gachaOverlay.classList.remove('hidden');
+            const res = await window.gachaApi.draw(state.user.userId, type, cost);
+            if (res.status === 'success') {
+                setTimeout(() => {
+                    state.user.tickets = res.data.ticketsAfter;
+                    updateTicketUI();
+                    ui.summonAnimation.classList.add('hidden');
+                    showResults(res.data.results);
+                    state.isAnimating = false;
+                }, 2000);
+            } else { ui.gachaOverlay.classList.add('hidden'); showError(res.message); state.isAnimating = false; }
+        }
+
+        function showResults(results) {
+            ui.resultContainer.classList.remove('hidden');
+            ui.resultGrid.innerHTML = '';
+            results.forEach((char, index) => {
+                const card = document.createElement('div');
+                const rarityClass = char.rarity.toLowerCase();
+                card.className = `result-card char-card ${rarityClass} ${char.charId}`;
+                card.style.animationDelay = `${index * 0.1}s`;
+                const imgUrl = char.imageUrl || `https://via.placeholder.com/150/000000/FFFFFF?text=${char.charId}`;
+                card.innerHTML = `
+            <span class="badge ${rarityClass}">${char.rarity}</span>
+            <img src="${imgUrl}" alt="${char.name}">
+            <div class="info"><span class="name">${char.name}</span></div>
+        `;
+                ui.resultGrid.appendChild(card);
+            });
+            const summaryContainer = document.getElementById('result-summary') || createSummaryContainer();
+            if (results.length > 1) { summaryContainer.classList.remove('hidden'); renderSummary(results, summaryContainer); }
+            else { summaryContainer.classList.add('hidden'); }
+        }
+
+        function createSummaryContainer() {
+            const div = document.createElement('div');
+            div.id = 'result-summary'; div.className = 'result-summary hidden';
+            ui.resultContainer.insertBefore(div, ui.closeResultBtn); return div;
+        }
+
+        function renderSummary(results, container) {
+            const stats = {};
+            results.forEach(r => { stats[r.name] = (stats[r.name] || 0) + 1; });
+            const sorted = Object.entries(stats).sort((a, b) => b[1] - a[1]);
+            container.innerHTML = `<h3>DRAW SUMMARY</h3><ul>${sorted.map(([name, count]) => `<li>${name} x${count}</li>`).join('')}</ul>`;
+        }
+
+        function closeResults() { ui.gachaOverlay.classList.add('hidden'); ui.resultContainer.classList.add('hidden'); }
+        function renderLobby() {
+            ui.displayUserId.textContent = state.user.userId; updateTicketUI();
+            ui.charPool.innerHTML = state.pool.map(char => {
+                const rarityClass = char.rarity.toLowerCase();
+                return `<div class="char-card ${rarityClass} ${char.charId}"><span class="badge ${rarityClass}">${char.rarity}</span><img src="${char.imageUrl || 'https://via.placeholder.com/120'}" alt="${char.name}"><div class="info"><span class="name">${char.name}</span><span class="rate">${char.weight}%</span></div></div>`;
+            }).join('');
+        }
+        function updateTicketUI() { ui.ticketCount.textContent = state.user.tickets; }
+        function switchScreen(name) { Object.values(screens).forEach(el => el.classList.add('hidden')); screens[name].classList.remove('hidden'); }
+        function setLoading(isLoading) { if (isLoading) { ui.startBtn.textContent = "CONNECTING..."; ui.startBtn.disabled = true; } else { ui.startBtn.textContent = "START GAME"; ui.startBtn.disabled = false; } }
+        function showError(msg) { ui.errorMsg.textContent = msg; ui.errorMsg.classList.remove('hidden'); if (msg) { setTimeout(() => ui.errorMsg.classList.add('hidden'), 3000); } }
+    </script>
+</body>
+
+</html>

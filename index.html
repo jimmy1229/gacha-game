@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gacha Game</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Zen+Maru+Gothic:wght@400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div id="app">
+        <!-- Screens will be injected here -->
+        <div id="loading" class="screen active">
+            <div class="loader"></div>
+            <p>SYSTEM INITIALIZING...</p>
+        </div>
+
+        <div id="login-screen" class="screen hidden">
+            <div class="login-card">
+                <h1>GACHA SYSTEM</h1>
+                <p class="subtitle">Enter your Identity</p>
+                <div class="input-group">
+                    <input type="text" id="user-id-input" placeholder="USER ID" autocomplete="off">
+                </div>
+                <button id="start-btn" class="btn-primary">START GAME</button>
+            </div>
+        </div>
+
+        <div id="lobby-screen" class="screen hidden">
+            <header class="top-bar">
+                <div class="user-info">
+                    <span class="label">PLAYER:</span>
+                    <span id="display-user-id" class="value">---</span>
+                </div>
+                <div class="ticket-info">
+                    <span class="icon">🎫</span>
+                    <span id="ticket-count" class="value">0</span>
+                </div>
+            </header>
+
+            <main class="main-content">
+                <section class="left-panel">
+                    <div class="gacha-controls">
+                        <h2>SUMMON</h2>
+                        <div class="actions">
+                            <button id="draw-one-btn" class="btn-draw" data-cost="1">
+                                <span class="draw-label">SINGLE</span>
+                                <span class="cost">1 Ticket</span>
+                            </button>
+                            <button id="draw-ten-btn" class="btn-draw" data-cost="10">
+                                <span class="draw-label">10x SUMMON</span>
+                                <span class="cost">10 Tickets</span>
+                            </button>
+                        </div>
+                        <div id="error-message" class="error-msg hidden"></div>
+                    </div>
+                </section>
+
+                <section class="right-panel">
+                    <h2>CHARACTER POOL</h2>
+                    <div id="character-pool" class="character-grid">
+                        <!-- Characters injected by JS -->
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- Gacha Overlay -->
+        <div id="gacha-overlay" class="overlay hidden">
+            <div class="summon-animation">
+                <div class="summon-circle"></div>
+                <div class="summon-rays"></div>
+            </div>
+            <div id="result-container" class="result-container hidden">
+                <div id="result-grid" class="result-grid"></div>
+                <button id="close-result-btn" class="btn-secondary">CONFIRM</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
