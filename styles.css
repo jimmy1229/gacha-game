@@ -314,32 +314,44 @@ button {
     z-index: 100;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    /* Start from top to allow scrolling */
+    overflow-y: auto;
+    /* Enable vertical scroll */
+    padding: 2rem 1rem;
+    /* Padding for mobile edges */
 }
 
 .overlay.hidden {
-    opacity: 0;
-    pointer-events: none;
+    display: none;
+    /* Stricter hidden for overlay */
 }
 
 .summon-animation {
     position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     width: 300px;
     height: 300px;
-    /* Add animation keyframes here if needed */
 }
 
 .result-container {
     z-index: 101;
     text-align: center;
-    width: 80%;
+    width: 100%;
+    /* Full width on mobile */
     max-width: 1000px;
+    margin-top: auto;
+    margin-bottom: auto;
+    /* Try to center if small, scroll if big */
 }
 
 .result-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(2, 1fr);
+    /* 2 columns for mobile */
+    gap: 1rem;
     margin-bottom: 2rem;
     justify-content: center;
 }
@@ -347,6 +359,7 @@ button {
 @media (min-width: 800px) {
     .result-grid {
         grid-template-columns: repeat(5, 1fr);
+        /* 5 columns for desktop */
     }
 }
 

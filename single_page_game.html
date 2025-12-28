@@ -310,16 +310,20 @@
             z-index: 100;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
+            overflow-y: auto;
+            padding: 2rem 1rem;
         }
 
         .overlay.hidden {
-            opacity: 0;
-            pointer-events: none;
+            display: none;
         }
 
         .summon-animation {
             position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             width: 300px;
             height: 300px;
         }
@@ -327,14 +331,16 @@
         .result-container {
             z-index: 101;
             text-align: center;
-            width: 80%;
+            width: 100%;
             max-width: 1000px;
+            margin-top: auto;
+            margin-bottom: auto;
         }
 
         .result-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
             margin-bottom: 2rem;
             justify-content: center;
         }
